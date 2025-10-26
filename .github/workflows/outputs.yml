@@ -1,0 +1,27 @@
+name: Outputs workflow
+
+on:
+  - push
+
+jobs:
+  generate-outputs:
+    name: Create outputs
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Generate version
+        id: version # Important: give the step an ID
+        run: |
+          VERSION="1.2.3"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Use version in same job
+        run: echo "Version is ${{ steps.version.outputs.version }}"
+
+  deploy:
+  needs: build
+  runs-on: ubuntu-latest
+  steps:
+    - name: Deploy version
+      run: echo "Deploying version ${{ needs.build.outputs.version }}"
