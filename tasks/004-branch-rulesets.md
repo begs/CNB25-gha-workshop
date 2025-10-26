@@ -30,14 +30,16 @@ practices and prevent accidental changes to critical branches 💥
      all required checks (like your build workflow) must pass before a pull
      request can be merged.
    - Here you will notice our previous, failed, `build` workflow. Select it as a
-     required check.
+     required check. (If the "Add checks" dropdown is empty, you can try searching
+     for "build" to find it, it should with the name "Build Project" unless you renamed
+     it to something else.)
 3. Once you've configured the settings, click the "Create" button at the bottom
    of the page to save your branch protection ruleset.
 4. Now, let's take a look at our previously created pull request that tried to
    build the project.
    - You should see that the pull request is now blocked from being merged
      because of the required status check! 🙅
-5. To fix the build, we need to update the `scripts/build.js` file to resolve
+5. To fix the build, we need to update the `src/scripts/build.js` file to resolve
    the error. Can you spot anything out of place in the top of the file? 🕵
 6. Once you have fixed the error, commit the changes to your branch and push
    them to GitHub.
