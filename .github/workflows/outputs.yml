@@ -2,26 +2,43 @@ name: Outputs workflow
 
 on:
   - push
-
 jobs:
-  generate-outputs:
-    name: Create outputs
+  build:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
+      commit-sha: ${{ steps.commit.outputs.sha }}
+      security-check: ${{ steps.security.outputs.passed }}
     steps:
+      - uses: actions/checkout@v5
+
       - name: Generate version
-        id: version # Important: give the step an ID
+        id: version
         run: |
-          VERSION="1.2.3"
+          VERSION="1.2.3-${{ github.run_number }}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Use version in same job
-        run: echo "Version is ${{ steps.version.outputs.version }}"
+      - name: Get commit SHA
+        id: commit
+        run: |
+          SHA=$(git rev-parse --short HEAD)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+
+      - name: Run security checks
+        id: security
+        run: |
+          npm audit --audit-level=moderate
+          echo "passed=true" >> $GITHUB_OUTPUT
+
+      - run: npm run build
 
   deploy:
-    needs: generate-outputs
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy version
-        run: echo "Deploying version ${{ needs.generate-outputs.outputs.version }}"
+      - name: Deploy if security passed
+        if: needs.build.outputs.security-check == 'true'
+        run: |
+          echo "Deploying version ${{ needs.build.outputs.version }}"
+          echo "From commit ${{ needs.build.outputs.commit-sha }}"
+          echo "Security checks: PASSED"
