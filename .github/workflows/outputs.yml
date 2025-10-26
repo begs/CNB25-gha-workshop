@@ -20,7 +20,7 @@ jobs:
         run: echo "Version is ${{ steps.version.outputs.version }}"
 
   deploy:
-    needs: build
+    needs: generate-outputs
     runs-on: ubuntu-latest
     steps:
       - name: Deploy version
