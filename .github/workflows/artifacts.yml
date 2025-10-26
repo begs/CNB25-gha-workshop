@@ -99,4 +99,4 @@ jobs:
             echo "⚠️  WARNING: Build size exceeds 1MB!"
           else
             echo "✅ Build size is acceptable"
-          fiame: Artifacts workflow
+          fi
